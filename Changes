@@ -1,0 +1,13 @@
+Revision history for Perl module Geo::MapInfo::MIF::Writer::Region
+
+0.03 2011-05-23
+  - Added example script for a region with a lake
+  - Documentation
+
+0.02 2011-05-23
+  - Removed Debug print
+  - Updated example scripts
+  - Added example scripts
+ 
+0.01 2011-05-19
+  - original version; created by ExtUtils::ModuleMaker 0.51
