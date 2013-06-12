@@ -1,8 +1,14 @@
 Revision history for Perl module Geo::MapInfo::MIF::Writer::Region
 
+0.05 2012-01-02
+  - Fixed a regular expression
+
+0.04 2011-05-24
+  - Updated Documentation
+
 0.03 2011-05-23
   - Added example script for a region with a lake
-  - Documentation
+  - Updated Documentation
 
 0.02 2011-05-23
   - Removed Debug print

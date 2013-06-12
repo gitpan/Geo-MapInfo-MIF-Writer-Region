@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:                Geo-MapInfo-MIF-Writer-Region
-version:             0.03
+version:             0.05
 abstract:            Perl extension for writing MapInfo Interchange Format (MIF) Region files.
 license:             ~
 author:              

@@ -6,7 +6,7 @@ use DateTime;
 use Path::Class qw{file};
 use Text::CSV_XS qw{};
 
-our $VERSION='0.03';
+our $VERSION='0.05';
 
 =head1 NAME
 
@@ -16,8 +16,19 @@ Geo::MapInfo::MIF::Writer::Region - Perl extension for writing MapInfo Interchan
 
   use Geo::MapInfo::MIF::Writer::Region;
   my $map=Geo::MapInfo::MIF::Writer::Region->new(basename=>$basename);
-  $map->addSimpleRegion();
-  $map->save; #creates mif and mid files
+  $map->addSimpleRegion(
+          data   => {col1=>"val1", col2=>"val2"},
+          region => [[$lon1, $lat1], [$lon2, $lat2], [$lon3, $lat3], [$lon4, $lat4]],
+        );
+  $map->addMultipartRegion(
+          data    => {col1=>"val1", col2=>"val2"},
+          regions => [                                #note the "s" in regions
+                      [[$lon1a, $lat1a], [$lon2a, $lat2a], [$lon3a, $lat3a], [$lon4a, $lat4a]],
+                      [[$lon1b, $lat1b], [$lon2b, $lat2b], [$lon3b, $lat3b], [$lon4b, $lat4b]],
+                      [[$lon1c, $lat1c], [$lon2c, $lat2c], [$lon3c, $lat3c], [$lon4c, $lat4c]],
+                     ],
+        );
+  $map->save;
 
 =head1 DESCRIPTION
 
@@ -31,9 +42,16 @@ Note: This package stores data in memory before writing so it may not be appropr
 
 Creates a new object.
 
+  my $map=Geo::MapInfo::MIF::Writer::Region->new;
+
 =head2 basename
 
 Sets and returns the basename of the mid/mif files.
+
+  $map->basename("basename");
+  $map->basename("./path/basename"); 
+  $map->basename("/path/basename"); 
+  $map->basename(undef); #default is "mapinfo-yyyymmddhhmiss"
 
 =cut
 
@@ -48,6 +66,12 @@ sub basename {
 }
 
 =head2 save
+
+Writes mid and mif files to the name indicated by basename.
+
+  $map->save;
+
+Note: This method overwrites files if they exist.
 
 =cut
 
@@ -133,7 +157,7 @@ sub _columns {
         $column{$key}->{"length"}=$length if $length>$column{$key}->{"length"};
       } else {
         my $type="Char";
-        if ($data->{$key}=~m/[-]?\d{1,10}/ and abs($data->{$key}) < 2 ** 31) {
+        if ($data->{$key}=~m/^[-]?\d{1,10}$/ and abs($data->{$key}) < 2 ** 31) {
           $type="Integer";
         }
         push @column, {
@@ -152,8 +176,10 @@ sub _columns {
 
 Adds a new object to the in memory array.
 
-  $map->addSimpleRegion(region=>[[$x1,$y1], [$x2,$y2], [$x3,$y3]],
-                        data=>{id=>1, col2=>"Foo", col3=>"Bar"});
+  $map->addSimpleRegion(
+          data   => {id=>1, col2=>"Foo", col3=>"Bar"}, #default is id=>$index.
+          region => [[$x1,$y1], [$x2,$y2], [$x3,$y3]], #default is "none" which means no geocoded data
+        );
 
 =cut
 
@@ -168,8 +194,14 @@ sub addSimpleRegion {
 
 Adds a new object to the in memory array.
 
-  $map->addMultipartRegion(regions=>[[[$x1,$y1], [$x2,$y2], [$x3,$y3]], \@r2, \@r3],
-                        data=>{id=>1, col2=>"Foo", col3=>"Bar"});
+  $map->addMultipartRegion(
+          data    => {id=>1, col2=>"Foo", col3=>"Bar"},
+          regions => [
+                       [[$x1,$y1], [$x2,$y2], [$x3,$y3]],
+                       \@r2, #can be island or lake but MapInfo figures that out for you.
+                       \@r3,
+                     ],
+        );
 
 =cut
 
@@ -185,7 +217,7 @@ sub _rows {
   return wantarray ? @{$self->{"_rows"}} : $self->{"_rows"};
 }
 
-=head1 LIMITATIONs
+=head1 LIMITATIONS
 
 Currently this package only supports Regions since points and circles are trival to support in MapInfo.
 
@@ -194,6 +226,8 @@ Currently we only support string and integer types.
 =head1 BUGS
 
 Please log on RT and send an email to the author.
+
+Patches accepted!
 
 =head1 SUPPORT
 
@@ -216,6 +250,8 @@ This program is free software licensed under the...
 The full text of the license can be found in the LICENSE file included with this module.
 
 =head1 SEE ALSO
+
+L<Geo::MapInfo::MIF> - MapInfo Interchange Format (MIF) File Reader
 
 =cut
 

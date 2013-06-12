@@ -5,7 +5,7 @@ use Geo::MapInfo::MIF::Writer::Region;
 
 =head1 NAME
 
-perl-Geo-MapInfo-MIF-Writer-Region-example.pl - Geo::MapInfo::MIF::Writer::Region Simple Exmaple
+perl-Geo-MapInfo-MIF-Writer-Region-example.pl - Geo::MapInfo::MIF::Writer::Region Simple Example
 
 =cut
 
